@@ -1,1 +1,2 @@
-# Rolling-Stone-Album-Rankings-TidyTuesday
+# Rolling Stone Album Rankings Analysis
+
