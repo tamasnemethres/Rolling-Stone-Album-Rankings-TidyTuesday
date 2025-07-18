@@ -10,10 +10,10 @@ jupyter: rolling_stones
 ---
 
 
-# Rolling Stone Album Rankings Analysis
+
 ### Predicting Album Longevity using Machine Learning and Survival Analysis
 
-**Author**: Tamas Nemeth  
+
 **Data Source**: TidyTuesday Rolling Stone Top 500 Albums  
 **Tools**: Python, scikit-learn, OpenAI API, Lifelines, Pandas
 

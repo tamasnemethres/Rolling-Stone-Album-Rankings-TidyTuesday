@@ -115,12 +115,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="rolling-stone-album-rankings-analysis" class="level1">
-<h1>Rolling Stone Album Rankings Analysis</h1>
 <section id="predicting-album-longevity-using-machine-learning-and-survival-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="predicting-album-longevity-using-machine-learning-and-survival-analysis">Predicting Album Longevity using Machine Learning and Survival Analysis</h3>
-<p><strong>Author</strong>: Tamas Nemeth<br>
-<strong>Data Source</strong>: TidyTuesday Rolling Stone Top 500 Albums<br>
+<p><strong>Data Source</strong>: TidyTuesday Rolling Stone Top 500 Albums<br>
 <strong>Tools</strong>: Python, scikit-learn, OpenAI API, Lifelines, Pandas</p>
 <hr>
 </section>
@@ -130,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Key Techniques Used</strong>: - <strong>LLM-Enhanced Data Imputation</strong>: Using GPT-4 to fill missing genre data - <strong>Survival Analysis</strong>: Kaplan-Meier estimators for understanding album longevity - <strong>Advanced Feature Engineering</strong>: Custom binary indicators and systematic feature selection - <strong>Robust Cross-Validation</strong>: 20-repeat stratified k-fold validation</p>
 <p><strong>Main Findings</strong>: - 92% of albums from 2003 remained on the list in 2012 - 64% of 2003 albums were still ranked in 2020 - Album type (Studio vs Live) emerged as the strongest predictor - Genre-specific patterns (Funk/Disco) showed significant predictive power</p>
 <hr>
-<div id="bbd61370" class="cell" data-execution_count="1">
+<div id="b4958329" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -155,7 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>, category<span class="op">=</span>UndefinedMetricWarning)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="60d198a6" class="cell" data-execution_count="2">
+<div id="17a563fe" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-05-07/rolling_stone.csv"</span>)</span>
@@ -243,7 +240,7 @@ dtype: int64</code></pre>
 <p><code>ave_age_at_top_500</code> Average age at top 500 Album.</p>
 <p><code>years_between</code> Years Between Debut and Top 500 Album.</p>
 <p><code>album_id</code> Album ID. NOS at the beginning of the ID if not on Spotify.</p>
-<div id="8ae0f005" class="cell" data-execution_count="3">
+<div id="e791a99b" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> data[data[<span class="st">"rank_2003"</span>].notna()].copy()</span>
@@ -560,7 +557,7 @@ Next I create 3 binary variables:<br>
 <em>With the following values</em><br>
 <code>1</code> Was on the Billboard<br>
 <code>0</code> Was not on Billboard</p>
-<div id="3492418b" class="cell" data-execution_count="4">
+<div id="aaead0e2" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>filtered_data[<span class="st">"billboard_2003"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="co"># since every album was on the billboard in 2003  </span></span>
@@ -570,19 +567,19 @@ Next I create 3 binary variables:<br>
 </div>
 <p>For the first analysis I am curious what makes an album a good album, so first I am creating a model from 2003 to 2012, and then based on the results predicting 2020.</p>
 <p>Since genre is a very important predictor, and I have missing values, I used GPT to fill in their data.</p>
-<div id="cc36862c" class="cell" data-execution_count="5">
+<div id="00e77e10" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_for_llm <span class="op">=</span> filtered_data.copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="933e9638" class="cell" data-execution_count="6">
+<div id="bb6f1578" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>non_missing_data <span class="op">=</span> data_for_llm[data_for_llm[<span class="st">"genre"</span>].notna()]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>non_missing_data[<span class="st">"genre"</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="53">
 <pre><code>genre
 Punk/Post-Punk/New Wave/Power Pop      71
 Blues/Blues Rock                       60
@@ -602,7 +599,7 @@ Latin                                   1
 Name: count, dtype: int64</code></pre>
 </div>
 </div>
-<div id="9e88de21" class="cell" data-execution_count="7">
+<div id="6c3e3119" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find rows with missing values</span></span>
@@ -613,7 +610,7 @@ Name: count, dtype: int64</code></pre>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>genre <span class="op">=</span> non_missing_data[<span class="st">"genre"</span>].unique() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="00cb1e13" class="cell" data-execution_count="8">
+<div id="13074e12" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>display(missing_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -921,7 +918,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="857426c5" class="cell" data-execution_count="9">
+<div id="f4de6e3d" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load_dotenv()</span></span>
@@ -934,7 +931,7 @@ Name: count, dtype: int64</code></pre>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     raise ValueError("API_KEY not found in environment variables")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="c6a195a8" class="cell" data-execution_count="10">
+<div id="eb5ee1b4" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># client = OpenAI()</span></span>
@@ -971,7 +968,7 @@ Name: count, dtype: int64</code></pre>
 </details>
 </div>
 <p>Since the model is a small model, I check it’s accuracy with an LLM-as-a-Judge</p>
-<div id="04b77cab" class="cell" data-execution_count="11">
+<div id="1cbdfcae" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># missing_data_to_judge = missing_data.copy()</span></span>
@@ -1024,7 +1021,7 @@ Name: count, dtype: int64</code></pre>
 <span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a><span class="co"># random_data.to_excel("random_data.xlsx", index=False)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="b2852df9" class="cell" data-execution_count="12">
+<div id="ee76147d" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>random_data <span class="op">=</span> pd.read_excel(<span class="st">"random_data.xlsx"</span>)</span>
@@ -1100,16 +1097,16 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 <p>Although 3 out of 10 were incorrect, it still got 2 out of 3 correct. Inspecting the reasoning for the score of 2, I decided to move on with the model, since it is just a nuanced difference.</p>
-<div id="e6f4b5ff" class="cell" data-execution_count="13">
+<div id="c3e00468" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>missing_data[<span class="st">"genre"</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="60">
 <pre><code>Series([], Name: count, dtype: int64)</code></pre>
 </div>
 </div>
-<div id="ba4777d1" class="cell" data-execution_count="14">
+<div id="159959dd" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rs_data = Rolling Stones data </span></span>
@@ -1118,17 +1115,16 @@ Name: count, dtype: int64</code></pre>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>rs_data.to_excel(<span class="st">"rs_data.xlsx"</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="3a97718a" class="cell" data-execution_count="15">
+<div id="bf8ed465" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>rs_data<span class="op">=</span> pd.read_excel(<span class="st">"rs_data.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-</section>
 <section id="survival-analysis-of-the-albums" class="level1">
 <h1>Survival analysis of the albums</h1>
-<div id="9226997e" class="cell" data-execution_count="16">
+<div id="ace3c639" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create survival variables: duration and event</span></span>
@@ -1179,7 +1175,7 @@ Albums that dropped off (events): 181
 Albums still on list (censored): 319</code></pre>
 </div>
 </div>
-<div id="506bc332" class="cell" data-execution_count="17">
+<div id="bbcc128d" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>kmf <span class="op">=</span> KaplanMeierFitter()</span>
@@ -1216,7 +1212,7 @@ Survival probability at 17 years (2020): 0.638</code></pre>
 </div>
 <p>Analysis shows that 92% of the albums that were on the Billboard charts in 2003 were still present in 2012, and nearly 64% of 2003 albums were on the 2020 Billboard charts. But what makes for that success? In the following Logistic Regression models I try to answer this question.</p>
 <p>I created a word count for album names, because I am curious if shorter names help albums perform better.</p>
-<div id="3ce8bbe5" class="cell" data-execution_count="18">
+<div id="7830b6c8" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, rows <span class="kw">in</span> rs_data.iterrows():</span>
@@ -1225,7 +1221,7 @@ Survival probability at 17 years (2020): 0.638</code></pre>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    rs_data.loc[index, <span class="st">"album_name_word_count"</span>] <span class="op">=</span> word_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="65fe5979" class="cell" data-execution_count="19">
+<div id="d7ab994a" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>display(rs_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1533,25 +1529,25 @@ Survival probability at 17 years (2020): 0.638</code></pre>
 </div>
 </div>
 </div>
-<div id="6ad8c10b" class="cell" data-execution_count="20">
+<div id="20f17d60" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>rs_data[<span class="st">"billboard_2012"</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="67">
 <pre><code>billboard_2012
 1    464
 0     36
 Name: count, dtype: int64</code></pre>
 </div>
 </div>
-<div id="08ab0f3d" class="cell" data-execution_count="21">
+<div id="ca9bb73b" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rs_data[<span class="st">'type'</span>] <span class="op">=</span> rs_data[<span class="st">'type'</span>].replace(<span class="st">'Soundtrack'</span>, <span class="st">'Live'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="b6ca029d" class="cell" data-execution_count="22">
+<div id="5a3f7018" class="cell" data-execution_count="22">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> group_rare_categories(df, column, min_count<span class="op">=</span><span class="dv">15</span>):</span>
@@ -1611,7 +1607,7 @@ Name: count, dtype: int64</code></pre>
  0.41071429 0.38392857 0.58928571 0.63095238]</code></pre>
 </div>
 </div>
-<div id="9cb1743f" class="cell" data-execution_count="23">
+<div id="f33a15df" class="cell" data-execution_count="23">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the pipeline before making predictions</span></span>
@@ -1640,7 +1636,7 @@ weighted avg       0.87      0.93      0.90        75
 </div>
 </div>
 <p>Well… The model is not the best… Let’s do some feature engineering stuff.</p>
-<div id="791b14b4" class="cell" data-execution_count="24">
+<div id="46094cbd" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your current baseline</span></span>
@@ -1778,7 +1774,7 @@ SUMMARY - Feature Removal Results:
 </div>
 </div>
 <p>Based on the results I will remove some features. But must all features from the subgroup go? Let’s see.</p>
-<div id="78196335" class="cell" data-execution_count="25">
+<div id="aa4fae5b" class="cell" data-execution_count="25">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the pipeline to see feature importance</span></span>
@@ -1823,7 +1819,7 @@ SUMMARY - Feature Removal Results:
 1                       num__album_name_word_count    0.004589</code></pre>
 </div>
 </div>
-<div id="74be78eb" class="cell" data-execution_count="26">
+<div id="f3503fac" class="cell" data-execution_count="26">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ml_data_engineered <span class="op">=</span> ml_data.copy()</span>
@@ -1832,7 +1828,7 @@ SUMMARY - Feature Removal Results:
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>ml_data_engineered <span class="op">=</span> ml_data_engineered.drop(columns<span class="op">=</span>[<span class="st">"genre"</span>, <span class="st">"album_name_word_count"</span>, <span class="st">"years_between"</span>, <span class="st">"artist_member_count"</span>, <span class="st">"artist_gender"</span>, <span class="st">"debut_album_release_year"</span>, <span class="st">"release_year"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="663d886e" class="cell" data-execution_count="27">
+<div id="2e2dd2e0" class="cell" data-execution_count="27">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"type"</span>, <span class="st">"is_funk/disco"</span>, <span class="st">"is_soul/gospel"</span>]</span>
@@ -1881,7 +1877,7 @@ SUMMARY - Feature Removal Results:
  0.57142857 0.52232143 0.39880952 0.55357143]</code></pre>
 </div>
 </div>
-<div id="e27c12b6" class="cell" data-execution_count="28">
+<div id="223751fa" class="cell" data-execution_count="28">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the pipeline before making predictions</span></span>
@@ -1909,7 +1905,7 @@ weighted avg       0.87      0.93      0.90        75
 </code></pre>
 </div>
 </div>
-<div id="95d809fe" class="cell" data-execution_count="29">
+<div id="aa220d40" class="cell" data-execution_count="29">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your current baseline</span></span>
@@ -2019,7 +2015,7 @@ SUMMARY - Feature Removal Results:
 🔴 WORSEN Remove 'is_soul/gospel': 0.497 (-0.007)</code></pre>
 </div>
 </div>
-<div id="ac8b0f34" class="cell" data-execution_count="30">
+<div id="c9fc8743" class="cell" data-execution_count="30">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the pipeline to see feature importance</span></span>
@@ -2050,7 +2046,7 @@ SUMMARY - Feature Removal Results:
 1           cat__type_Live    0.021884</code></pre>
 </div>
 </div>
-<div id="caf0a352" class="cell" data-execution_count="31">
+<div id="568328cc" class="cell" data-execution_count="31">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_2 <span class="op">=</span> ml_data_engineered.copy()</span>
@@ -2058,7 +2054,7 @@ SUMMARY - Feature Removal Results:
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_2[<span class="st">"is_studio"</span>] <span class="op">=</span> (ml_data[<span class="st">"type"</span>] <span class="op">==</span> <span class="st">"Studio"</span>).astype(<span class="bu">int</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="8ac0d3b9" class="cell" data-execution_count="32">
+<div id="ce8f04b9" class="cell" data-execution_count="32">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"is_funk/disco"</span>, <span class="st">"is_studio"</span>, <span class="st">"is_live"</span>]</span>
@@ -2109,7 +2105,7 @@ SUMMARY - Feature Removal Results:
  0.51785714 0.46875    0.37202381 0.50892857]</code></pre>
 </div>
 </div>
-<div id="5a1008da" class="cell" data-execution_count="33">
+<div id="65ad8b9d" class="cell" data-execution_count="33">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train)</span>
@@ -2135,7 +2131,7 @@ weighted avg       0.87      0.93      0.90        75
 </code></pre>
 </div>
 </div>
-<div id="74e9d7ce" class="cell" data-execution_count="34">
+<div id="6eeecbc4" class="cell" data-execution_count="34">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your current baseline</span></span>
@@ -2245,7 +2241,7 @@ SUMMARY - Feature Removal Results:
 🔴 WORSEN Remove 'is_studio': 0.487 (-0.088)</code></pre>
 </div>
 </div>
-<div id="7205afa5" class="cell" data-execution_count="35">
+<div id="65df2c6b" class="cell" data-execution_count="35">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the pipeline to see feature importance</span></span>
@@ -2274,7 +2270,7 @@ SUMMARY - Feature Removal Results:
 2        cat__is_live_1    0.069865</code></pre>
 </div>
 </div>
-<div id="66c35e61" class="cell" data-execution_count="36">
+<div id="82b41b1f" class="cell" data-execution_count="36">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_3 <span class="op">=</span> ml_data.copy()</span>
@@ -2284,7 +2280,7 @@ SUMMARY - Feature Removal Results:
 <span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_3 <span class="op">=</span> ml_data_engineered_3.drop(columns<span class="op">=</span>[<span class="st">"genre"</span>, <span class="st">"album_name_word_count"</span>, <span class="st">"years_between"</span>, <span class="st">"artist_member_count"</span>, <span class="st">"artist_gender"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="7361cc5a" class="cell" data-execution_count="37">
+<div id="0948b455" class="cell" data-execution_count="37">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"is_studio"</span>, <span class="st">"is_live"</span>]</span>
@@ -2334,7 +2330,7 @@ SUMMARY - Feature Removal Results:
  0.48214286 0.44196429 0.36607143 0.57142857]</code></pre>
 </div>
 </div>
-<div id="feaf5243" class="cell" data-execution_count="38">
+<div id="4a0f9b35" class="cell" data-execution_count="38">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train)</span>
@@ -2360,7 +2356,7 @@ weighted avg       0.87      0.93      0.90        75
 </code></pre>
 </div>
 </div>
-<div id="637d726c" class="cell" data-execution_count="39">
+<div id="1d9fa603" class="cell" data-execution_count="39">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your current baseline</span></span>
@@ -2465,7 +2461,7 @@ SUMMARY - Feature Removal Results:
 🔴 WORSEN Remove 'is_studio': 0.461 (-0.102)</code></pre>
 </div>
 </div>
-<div id="6f092127" class="cell" data-execution_count="40">
+<div id="236e63cd" class="cell" data-execution_count="40">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"is_studio"</span>]</span>
@@ -2514,7 +2510,7 @@ SUMMARY - Feature Removal Results:
  0.39285714 0.44642857 0.37797619 0.57142857]</code></pre>
 </div>
 </div>
-<div id="06016ae6" class="cell" data-execution_count="41">
+<div id="91ae6f48" class="cell" data-execution_count="41">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train)</span>
@@ -2543,7 +2539,7 @@ weighted avg       0.87      0.93      0.90        75
 <p>Although the ROC-AUC improved slightly, the model performed best at 0.57 with the following features: - <code>is_funk/disco</code> - <code>is_studio</code> - <code>is_live</code></p>
 <section id="final-model-again" class="level2">
 <h2 class="anchored" data-anchor-id="final-model-again">FINAL MODEL <em>again</em></h2>
-<div id="cd415833" class="cell" data-execution_count="42">
+<div id="065a9996" class="cell" data-execution_count="42">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_2 <span class="op">=</span> ml_data_engineered.copy()</span>
@@ -2551,7 +2547,7 @@ weighted avg       0.87      0.93      0.90        75
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_2[<span class="st">"is_studio"</span>] <span class="op">=</span> (ml_data[<span class="st">"type"</span>] <span class="op">==</span> <span class="st">"Studio"</span>).astype(<span class="bu">int</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="4d2be3ea" class="cell" data-execution_count="43">
+<div id="61ec374c" class="cell" data-execution_count="43">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"is_funk/disco"</span>, <span class="st">"is_studio"</span>, <span class="st">"is_live"</span>]</span>
@@ -2602,7 +2598,7 @@ weighted avg       0.87      0.93      0.90        75
  0.51785714 0.46875    0.37202381 0.50892857]</code></pre>
 </div>
 </div>
-<div id="6206e3f4" class="cell" data-execution_count="44">
+<div id="a8f8ad36" class="cell" data-execution_count="44">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train)</span>
@@ -2632,21 +2628,21 @@ weighted avg       0.87      0.93      0.90        75
 </section>
 <section id="final-model--predicting-the-2020-dataset" class="level1">
 <h1>Final model- predicting the 2020 dataset</h1>
-<div id="f670114c" class="cell" data-execution_count="45">
+<div id="7bac9a4d" class="cell" data-execution_count="45">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Adding bilboard 2020 data to ml_data_engineered_2</span></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_2[<span class="st">"billboard_2020"</span>] <span class="op">=</span> rs_data[<span class="st">"billboard_2020"</span>].copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ce5774f0" class="cell" data-execution_count="46">
+<div id="89d0fe5d" class="cell" data-execution_count="46">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>y_pred_2020 <span class="op">=</span> pipeline.predict(ml_data_engineered_2[categorical_features])</span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>ml_data_engineered_2[<span class="st">"pred_2020"</span>] <span class="op">=</span> y_pred_2020</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="70b78877" class="cell" data-execution_count="47">
+<div id="e196cb33" class="cell" data-execution_count="47">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Comparing to the actual 2020 billboard presence</span></span>
