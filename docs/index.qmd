@@ -8,7 +8,12 @@ format:
     theme: darkly
 jupyter: rolling_stones
 ---
-     
+
+
+# Rolling Stone Album Rankings Analysis
+### Predicting Album Longevity using Machine Learning and Survival Analysis
+
+**Author**: Tamas Nemeth  
 **Data Source**: TidyTuesday Rolling Stone Top 500 Albums  
 **Tools**: Python, scikit-learn, OpenAI API, Lifelines, Pandas
 
@@ -33,12 +38,12 @@ This analysis investigates what characteristics make an album endure on the Roll
 ---
 
 ```{python}
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 import os
+import warnings
 from openai import OpenAI
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
@@ -46,10 +51,13 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import make_pipeline
+from sklearn.exceptions import UndefinedMetricWarning
+
 from nltk.tokenize import word_tokenize
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
+warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 ```
 
 ```{python}
@@ -144,6 +152,7 @@ missing_genre_mask = data_for_llm["genre"].isna()
 
 # Create distinct dataset with only missing values
 missing_data = data_for_llm[missing_genre_mask].copy()
+genre = non_missing_data["genre"].unique() 
 ```
 
 ```{python}
@@ -191,14 +200,12 @@ display(missing_data)
 #     missing_data.loc[index, "genre"] = response_text
 
 # display(missing_data)
+
+# #Backup data
+# missing_data.to_excel("missing_genre.xlsx", index=False)
 ```
 
-```{python}
-# Backup the data.
-missing_data.to_excel("missing_genre.xlsx", index=False)
-```
-
-Since the model is a small model, I check it's accuracy with an LLM-as-a-Judge.
+Since the model is a small model, I check it's accuracy with an LLM-as-a-Judge
 
 ```{python}
 # missing_data_to_judge = missing_data.copy()
@@ -247,13 +254,16 @@ Since the model is a small model, I check it's accuracy with an LLM-as-a-Judge.
     
 #     random_data.loc[index, 'correctness_score'] = score
 #     random_data.loc[index, 'reasoning'] = reasoning
-#Backup
+# #Backup
 # random_data.to_excel("random_data.xlsx", index=False)
-
 ```
 
+```{python}
+random_data = pd.read_excel("random_data.xlsx")
+display(random_data[["correctness_score", "reasoning"]])
+```
 
-Although 4 out of 10 were incorrect, it still got 2 out of 3 correct. Inspecting the reasoning for the score of 2, I decided to move on with the model, since it is just a nuanced difference.
+Although 3 out of 10 were incorrect, it still got 2 out of 3 correct. Inspecting the reasoning for the score of 2, I decided to move on with the model, since it is just a nuanced difference.
 
 ```{python}
 missing_data["genre"].value_counts()
@@ -394,9 +404,6 @@ print(scores)
 ```
 
 ```{python}
-
-from sklearn.metrics import roc_auc_score, classification_report
-
 # Fit the pipeline before making predictions
 pipeline.fit(X_train, y_train)
 
@@ -414,7 +421,7 @@ Well... The model is not the best... Let's do some feature engineering stuff.
 
 ```{python}
 # Your current baseline
-baseline_score = 0.513
+baseline_score = 0.498
 
 # Test removing each feature with full CV
 current_features = ["release_year", "type", "genre", "album_name_word_count", 
@@ -724,7 +731,6 @@ print(classification_report(y_holdout, y_pred))
 ```
 
 ```{python}
-
 # Your current baseline
 baseline_score = 0.575
 
@@ -838,7 +844,6 @@ ml_data_engineered_3 = ml_data_engineered_3.drop(columns=["genre", "album_name_w
 ```
 
 ```{python}
-
 categorical_features = ["is_studio", "is_live"]
 X = ml_data_engineered_3.drop(columns=["billboard_2012"])
 y = ml_data_engineered_3["billboard_2012"]
@@ -1069,12 +1074,10 @@ ml_data_engineered_2["billboard_2020"] = rs_data["billboard_2020"].copy()
 ```{python}
 y_pred_2020 = pipeline.predict(ml_data_engineered_2[categorical_features])
 ml_data_engineered_2["pred_2020"] = y_pred_2020
-
 ```
 
 ```{python}
 #Comparing to the actual 2020 billboard presence
-
 print(confusion_matrix(ml_data_engineered_2['billboard_2020'], ml_data_engineered_2['pred_2020']))
 print(classification_report(ml_data_engineered_2['billboard_2020'], ml_data_engineered_2['pred_2020']))
 ```
@@ -1092,22 +1095,19 @@ Also note that the original dataset contained albums that were older than 2003. 
 - **Most Important Features**: Album type (Studio vs Live) and genre (Funk/Disco)
 - **Prediction Challenge**: Severe class imbalance (most albums remained on charts)
 
-### **Business Insights**
+### **Business Insight**
 
-**1. Album Longevity Patterns**
+**Album Longevity Patterns**
 - **92% survival rate** from 2003 to 2012 (9 years)
 - **64% survival rate** from 2003 to 2020 (17 years)
 - Classic albums show remarkable staying power
 
-**2. Key Success Factors**
-- **Album Format**: Studio albums vs Live albums have different survival patterns
-- **Genre Influence**: Funk/Disco albums show distinct longevity characteristics
-- **Market Stability**: The "classic" canon is relatively stable over time
+
 
 ### **Technical Achievements**
 
 **1. Innovation in Data Science**
-- Successfully used **GPT-4 for data augmentation** (60% accuracy)
+- Successfully used **GPT-4-nano for data augmentation** (70% accuracy)
 - Implemented **LLM-as-a-Judge** validation framework
 - Combined traditional ML with modern AI tools
 
