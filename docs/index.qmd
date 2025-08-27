@@ -10,7 +10,6 @@ jupyter: rolling_stones
 ---
 
 
-
 ### Predicting Album Longevity using Machine Learning and Survival Analysis
 
 
@@ -24,16 +23,16 @@ jupyter: rolling_stones
 This analysis investigates what characteristics make an album endure on the Rolling Stone Top 500 list over time. Using the Rolling Stone rankings from 2003, 2012, and 2020, I built predictive models to identify factors that contribute to an album's lasting success.
 
 **Key Techniques Used**:
-- **LLM-Enhanced Data Imputation**: Using GPT-4 to fill missing genre data
-- **Survival Analysis**: Kaplan-Meier estimators for understanding album longevity
-- **Advanced Feature Engineering**: Custom binary indicators and systematic feature selection
-- **Robust Cross-Validation**: 20-repeat stratified k-fold validation
+- **LLM-Enhanced Data Imputation**: Using GPT-4 to fill missing genre data <br>
+- **Survival Analysis**: Kaplan-Meier estimators for understanding album longevity <br>
+- **Advanced Feature Engineering**: Custom binary indicators and systematic feature selection <br>
+- **Robust Cross-Validation**: 20-repeat stratified k-fold validation <br>
 
 **Main Findings**:
-- 92% of albums from 2003 remained on the list in 2012
-- 64% of 2003 albums were still ranked in 2020
-- Album type (Studio vs Live) emerged as the strongest predictor
-- Genre-specific patterns (Funk/Disco) showed significant predictive power
+- 92% of albums from 2003 remained on the list in 2012 <br>
+- 64% of 2003 albums were still ranked in 2020 <br>
+- Album type (Studio vs Live) emerged as the strongest predictor <br>
+- Genre-specific patterns (Funk/Disco) showed significant predictive power <br>
 
 ---
 
@@ -277,7 +276,8 @@ rs_data.to_excel("rs_data.xlsx", index=False)
 ```
 
 ```{python}
-rs_data= pd.read_excel("rs_data.xlsx")
+#Backup
+#rs_data= pd.read_excel("rs_data.xlsx")
 ```
 
 # Survival analysis of the albums
